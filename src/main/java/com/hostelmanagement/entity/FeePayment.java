@@ -28,13 +28,31 @@ public class FeePayment {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
-
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
 
-    public FeePayment() {
+    public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public FeePayment() {
     }
 
     public Long getId() {

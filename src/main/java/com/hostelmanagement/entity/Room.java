@@ -1,14 +1,12 @@
 package com.hostelmanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "rooms")
-
 public class Room {
 
     @Id
@@ -33,8 +31,13 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Bed> beds;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
     @PrePersist
     public void prePersist() {
+
         this.createdAt = LocalDateTime.now();
 
         if (this.occupiedBeds == null) {
@@ -42,89 +45,85 @@ public class Room {
         }
     }
 
-	public Room(String roomNumber, Integer totalBeds, Integer occupiedBeds, String roomType,
-			Integer floorNumber, String remarks, LocalDateTime createdAt, List<Bed> beds) {
-		super();
-		this.roomNumber = roomNumber;
-		this.totalBeds = totalBeds;
-		this.occupiedBeds = occupiedBeds;
-		this.roomType = roomType;
-		this.floorNumber = floorNumber;
-		this.remarks = remarks;
-		this.createdAt = createdAt;
-		this.beds = beds;
-	}
+    // EMPTY CONSTRUCTOR
+    public Room() {
+    }
 
-	public Room() {
-		super();
-	}
+    // GETTERS & SETTERS
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getRoomNumber() {
-		return roomNumber;
-	}
+    public String getRoomNumber() {
+        return roomNumber;
+    }
 
-	public void setRoomNumber(String roomNumber) {
-		this.roomNumber = roomNumber;
-	}
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
-	public Integer getTotalBeds() {
-		return totalBeds;
-	}
+    public Integer getTotalBeds() {
+        return totalBeds;
+    }
 
-	public void setTotalBeds(Integer totalBeds) {
-		this.totalBeds = totalBeds;
-	}
+    public void setTotalBeds(Integer totalBeds) {
+        this.totalBeds = totalBeds;
+    }
 
-	public Integer getOccupiedBeds() {
-		return occupiedBeds;
-	}
+    public Integer getOccupiedBeds() {
+        return occupiedBeds;
+    }
 
-	public void setOccupiedBeds(Integer occupiedBeds) {
-		this.occupiedBeds = occupiedBeds;
-	}
+    public void setOccupiedBeds(Integer occupiedBeds) {
+        this.occupiedBeds = occupiedBeds;
+    }
 
-	public String getRoomType() {
-		return roomType;
-	}
+    public String getRoomType() {
+        return roomType;
+    }
 
-	public void setRoomType(String roomType) {
-		this.roomType = roomType;
-	}
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
 
-	public Integer getFloorNumber() {
-		return floorNumber;
-	}
+    public Integer getFloorNumber() {
+        return floorNumber;
+    }
 
-	public void setFloorNumber(Integer floorNumber) {
-		this.floorNumber = floorNumber;
-	}
+    public void setFloorNumber(Integer floorNumber) {
+        this.floorNumber = floorNumber;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-	public List<Bed> getBeds() {
-		return beds;
-	}
+    public List<Bed> getBeds() {
+        return beds;
+    }
 
-	public void setBeds(List<Bed> beds) {
-		this.beds = beds;
-	}
-    
+    public void setBeds(List<Bed> beds) {
+        this.beds = beds;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 }

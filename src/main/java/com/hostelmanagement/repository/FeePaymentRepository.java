@@ -8,5 +8,11 @@ import java.util.List;
 public interface FeePaymentRepository
         extends JpaRepository<FeePayment, Long> {
 
-    List<FeePayment> findByStudentId(Long studentId);
+    List<FeePayment> findByStudentId(
+            Long studentId
+    );
+
+    List<FeePayment> findByCustomerId(
+            Long customerId
+    );
 }

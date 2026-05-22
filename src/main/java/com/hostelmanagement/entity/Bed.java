@@ -2,7 +2,6 @@ package com.hostelmanagement.entity;
 
 import com.hostelmanagement.enums.BedStatus;
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "beds")
@@ -23,49 +22,43 @@ public class Bed {
 
     @PrePersist
     public void prePersist() {
+
         if (status == null) {
             status = BedStatus.AVAILABLE;
         }
     }
 
-	public Bed() {
-		super();
-	}
+    // EMPTY CONSTRUCTOR
+    public Bed() {
+    }
 
-	public Bed(String bedNumber, BedStatus status, Room room) {
-		super();
-		this.bedNumber = bedNumber;
-		this.status = status;
-		this.room = room;
-	}
+    // GETTERS & SETTERS
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getBedNumber() {
-		return bedNumber;
-	}
+    public String getBedNumber() {
+        return bedNumber;
+    }
 
-	public void setBedNumber(String bedNumber) {
-		this.bedNumber = bedNumber;
-	}
+    public void setBedNumber(String bedNumber) {
+        this.bedNumber = bedNumber;
+    }
 
-	public BedStatus getStatus() {
-		return status;
-	}
+    public BedStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(BedStatus status) {
-		this.status = status;
-	}
+    public void setStatus(BedStatus status) {
+        this.status = status;
+    }
 
-	public Room getRoom() {
-		return room;
-	}
+    public Room getRoom() {
+        return room;
+    }
 
-	public void setRoom(Room room) {
-		this.room = room;
-	}
-    
-    
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }

@@ -3,10 +3,13 @@ package com.hostelmanagement.service;
 import com.hostelmanagement.dto.RoomRequest;
 import com.hostelmanagement.dto.RoomResponse;
 import com.hostelmanagement.entity.Bed;
+import com.hostelmanagement.entity.Customer;
 import com.hostelmanagement.entity.Room;
 import com.hostelmanagement.enums.BedStatus;
 import com.hostelmanagement.repository.BedRepository;
+import com.hostelmanagement.repository.CustomerRepository;
 import com.hostelmanagement.repository.RoomRepository;
+import com.hostelmanagement.security.JwtUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,23 +20,40 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final BedRepository bedRepository;
+    private final JwtUtils jwtUtils;
+    private final CustomerRepository customerRepository;
 
     public RoomService(RoomRepository roomRepository,
-                       BedRepository bedRepository) {
+                       BedRepository bedRepository,
+                       JwtUtils jwtUtils,
+                       CustomerRepository customerRepository) {
 
         this.roomRepository = roomRepository;
         this.bedRepository = bedRepository;
+        this.jwtUtils = jwtUtils;
+        this.customerRepository = customerRepository;
     }
 
     // CREATE ROOM
     public RoomResponse createRoom(RoomRequest request) {
 
-        // CHECK ROOM EXISTS
-        if (roomRepository.existsByRoomNumber(request.getRoomNumber())) {
-            throw new RuntimeException("Room already exists");
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
+
+        Customer customer =
+                customerRepository.findById(customerId)
+                        .orElseThrow(() ->
+                                new RuntimeException("Customer not found"));
+
+        if (roomRepository.existsByRoomNumber(
+                request.getRoomNumber()
+        )) {
+
+            throw new RuntimeException(
+                    "Room already exists"
+            );
         }
 
-        // CREATE ROOM
         Room room = new Room();
 
         room.setRoomNumber(request.getRoomNumber());
@@ -43,10 +63,11 @@ public class RoomService {
         room.setFloorNumber(request.getFloorNumber());
         room.setRemarks(request.getRemarks());
 
-        // SAVE ROOM
-        Room savedRoom = roomRepository.save(room);
+        room.setCustomer(customer);
 
-        // CREATE BEDS
+        Room savedRoom =
+                roomRepository.save(room);
+
         List<Bed> beds = new ArrayList<>();
 
         for (int i = 1; i <= request.getTotalBeds(); i++) {
@@ -60,19 +81,20 @@ public class RoomService {
             beds.add(bed);
         }
 
-        // SAVE ALL BEDS
         bedRepository.saveAll(beds);
 
-        // RETURN RESPONSE
         return mapToResponse(savedRoom);
     }
 
     // GET ALL ROOMS
     public List<RoomResponse> getAllRooms() {
 
-        List<Room> rooms = roomRepository.findAll();
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
 
-        return rooms.stream()
+        return roomRepository
+                .findByCustomerId(customerId)
+                .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -80,26 +102,49 @@ public class RoomService {
     // GET ROOM BY ID
     public RoomResponse getRoomById(Long id) {
 
-        Room room = roomRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Room not found"));
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
+
+        Room room =
+                roomRepository
+                        .findByIdAndCustomerId(
+                                id,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Room not found"
+                                ));
 
         return mapToResponse(room);
     }
 
     // UPDATE ROOM
-    public RoomResponse updateRoom(Long id,
-                                   RoomRequest request) {
+    public RoomResponse updateRoom(
+            Long id,
+            RoomRequest request
+    ) {
 
-        Room room = roomRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Room not found"));
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
+
+        Room room =
+                roomRepository
+                        .findByIdAndCustomerId(
+                                id,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Room not found"
+                                ));
 
         room.setRoomType(request.getRoomType());
         room.setFloorNumber(request.getFloorNumber());
         room.setRemarks(request.getRemarks());
 
-        Room updatedRoom = roomRepository.save(room);
+        Room updatedRoom =
+                roomRepository.save(room);
 
         return mapToResponse(updatedRoom);
     }
@@ -107,29 +152,59 @@ public class RoomService {
     // DELETE ROOM
     public void deleteRoom(Long id) {
 
-        Room room = roomRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Room not found"));
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
+
+        Room room =
+                roomRepository
+                        .findByIdAndCustomerId(
+                                id,
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Room not found"
+                                ));
 
         roomRepository.delete(room);
     }
 
-    // MAP ROOM ENTITY TO RESPONSE DTO
+    // MAP RESPONSE
     private RoomResponse mapToResponse(Room room) {
 
-        RoomResponse response = new RoomResponse();
-        response.setId(room.getId());
-        response.setRoomNumber(room.getRoomNumber());
-        response.setTotalBeds(room.getTotalBeds());
-        response.setOccupiedBeds(room.getOccupiedBeds());
+        RoomResponse response =
+                new RoomResponse();
 
-        response.setAvailableBeds(
-                room.getTotalBeds() - room.getOccupiedBeds()
+        response.setId(room.getId());
+
+        response.setRoomNumber(
+                room.getRoomNumber()
         );
 
-        response.setRoomType(room.getRoomType());
-        response.setFloorNumber(room.getFloorNumber());
-        response.setRemarks(room.getRemarks());
+        response.setTotalBeds(
+                room.getTotalBeds()
+        );
+
+        response.setOccupiedBeds(
+                room.getOccupiedBeds()
+        );
+
+        response.setAvailableBeds(
+                room.getTotalBeds()
+                        - room.getOccupiedBeds()
+        );
+
+        response.setRoomType(
+                room.getRoomType()
+        );
+
+        response.setFloorNumber(
+                room.getFloorNumber()
+        );
+
+        response.setRemarks(
+                room.getRemarks()
+        );
 
         return response;
     }

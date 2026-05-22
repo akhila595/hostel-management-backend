@@ -44,7 +44,11 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "bed_id")
     private Bed bed;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+    
     @PrePersist
     public void prePersist() {
 
@@ -55,7 +59,23 @@ public class Student {
         }
     }
 
-    public Student() {
+    public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Student() {
     }
 
     public Long getId() {

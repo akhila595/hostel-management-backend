@@ -6,6 +6,7 @@ import com.hostelmanagement.entity.FeePayment;
 import com.hostelmanagement.entity.Student;
 import com.hostelmanagement.repository.FeePaymentRepository;
 import com.hostelmanagement.repository.StudentRepository;
+import com.hostelmanagement.security.JwtUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,14 +17,21 @@ public class FeePaymentService {
 
     private final FeePaymentRepository feePaymentRepository;
     private final StudentRepository studentRepository;
+    private final JwtUtils jwtUtils;
 
     public FeePaymentService(
             FeePaymentRepository feePaymentRepository,
-            StudentRepository studentRepository
+            StudentRepository studentRepository,
+            JwtUtils jwtUtils
     ) {
 
-        this.feePaymentRepository = feePaymentRepository;
-        this.studentRepository = studentRepository;
+        this.feePaymentRepository =
+                feePaymentRepository;
+
+        this.studentRepository =
+                studentRepository;
+
+        this.jwtUtils = jwtUtils;
     }
 
     // PAY FEE
@@ -31,24 +39,52 @@ public class FeePaymentService {
             FeePaymentRequest request
     ) {
 
-        Student student = studentRepository
-                .findById(request.getStudentId())
-                .orElseThrow(() ->
-                        new RuntimeException("Student not found"));
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
 
-        FeePayment payment = new FeePayment();
+        Student student =
+                studentRepository
+                        .findByIdAndCustomerId(
+                                request.getStudentId(),
+                                customerId
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Student not found"
+                                ));
+
+        FeePayment payment =
+                new FeePayment();
 
         payment.setStudent(student);
-        payment.setAmountPaid(request.getAmountPaid());
-        payment.setPaymentDate(LocalDate.now());
-        payment.setPaymentMode(request.getPaymentMode());
-        payment.setRemarks(request.getRemarks());
 
-        // NEXT DUE DATE
+        payment.setCustomer(
+                student.getCustomer()
+        );
+
+        payment.setAmountPaid(
+                request.getAmountPaid()
+        );
+
+        payment.setPaymentDate(
+                LocalDate.now()
+        );
+
+        payment.setPaymentMode(
+                request.getPaymentMode()
+        );
+
+        payment.setRemarks(
+                request.getRemarks()
+        );
+
         LocalDate nextDueDate =
-                student.getNextDueDate().plusDays(30);
+                student.getNextDueDate()
+                        .plusDays(30);
 
-        payment.setNextDueDate(nextDueDate);
+        payment.setNextDueDate(
+                nextDueDate
+        );
 
         FeePayment savedPayment =
                 feePaymentRepository.save(payment);
@@ -62,9 +98,8 @@ public class FeePaymentService {
     }
 
     // PAYMENT HISTORY
-    public List<FeePaymentResponse> getPaymentHistory(
-            Long studentId
-    ) {
+    public List<FeePaymentResponse>
+    getPaymentHistory(Long studentId) {
 
         return feePaymentRepository
                 .findByStudentId(studentId)
@@ -84,7 +119,8 @@ public class FeePaymentService {
         response.setId(payment.getId());
 
         response.setStudentName(
-                payment.getStudent().getFullName()
+                payment.getStudent()
+                        .getFullName()
         );
 
         response.setAmountPaid(
