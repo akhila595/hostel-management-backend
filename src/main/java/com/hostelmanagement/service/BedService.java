@@ -10,21 +10,15 @@ import java.util.List;
 @Service
 public class BedService {
 
-    private final BedRepository bedRepository;
+	private final BedRepository bedRepository;
 
-    public BedService(
-            BedRepository bedRepository
-    ) {
+	public BedService(BedRepository bedRepository) {
 
-        this.bedRepository =
-                bedRepository;
-    }
+		this.bedRepository = bedRepository;
+	}
 
-    public List<Bed> getBedsByRoom(
-            Long roomId
-    ) {
+	public List<Bed> getBedsByRoom(Long roomId) {
 
-        return bedRepository
-                .findByRoomId(roomId);
-    }
+		return bedRepository.findByRoomId(roomId);
+	}
 }

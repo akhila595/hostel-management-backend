@@ -1,6 +1,8 @@
 package com.hostelmanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hostelmanagement.enums.BedStatus;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +20,8 @@ public class Bed {
 
     @ManyToOne
     @JoinColumn(name = "room_id")
+
+    @JsonIgnore
     private Room room;
 
     @PrePersist
@@ -28,11 +32,14 @@ public class Bed {
         }
     }
 
-    // EMPTY CONSTRUCTOR
     public Bed() {
     }
 
-    // GETTERS & SETTERS
+    public Bed(String bedNumber, BedStatus status, Room room) {
+        this.bedNumber = bedNumber;
+        this.status = status;
+        this.room = room;
+    }
 
     public Long getId() {
         return id;

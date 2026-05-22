@@ -13,25 +13,16 @@ import java.util.List;
 @CrossOrigin
 public class BedController {
 
-    private final BedService bedService;
+	private final BedService bedService;
 
-    public BedController(
-            BedService bedService
-    ) {
+	public BedController(BedService bedService) {
 
-        this.bedService = bedService;
-    }
+		this.bedService = bedService;
+	}
 
-    @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<Bed>>
-    getBedsByRoom(
-            @PathVariable Long roomId
-    ) {
+	@GetMapping("/room/{roomId}")
+	public ResponseEntity<List<Bed>> getBedsByRoom(@PathVariable Long roomId) {
 
-        return ResponseEntity.ok(
-                bedService.getBedsByRoom(
-                        roomId
-                )
-        );
-    }
+		return ResponseEntity.ok(bedService.getBedsByRoom(roomId));
+	}
 }
