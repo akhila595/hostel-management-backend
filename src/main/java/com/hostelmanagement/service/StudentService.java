@@ -281,16 +281,21 @@ public class StudentService {
         // FREE BED
         Bed bed = student.getBed();
 
-        bed.setStatus(BedStatus.AVAILABLE);
+        bed.setStatus(
+                BedStatus.AVAILABLE
+        );
 
         bedRepository.save(bed);
 
         // UPDATE ROOM COUNT
         Room room = student.getRoom();
 
-        room.setOccupiedBeds(
-                room.getOccupiedBeds() - 1
-        );
+        if (room.getOccupiedBeds() > 0) {
+
+            room.setOccupiedBeds(
+                    room.getOccupiedBeds() - 1
+            );
+        }
 
         roomRepository.save(room);
     }
@@ -305,34 +310,22 @@ public class StudentService {
 
         response.setId(student.getId());
 
-        response.setFullName(
-                student.getFullName()
-        );
+        response.setFullName(student.getFullName());
 
-        response.setPhoneNumber(
-                student.getPhoneNumber()
-        );
+        response.setPhoneNumber(student.getPhoneNumber());
 
-        response.setFeeAmount(
-                student.getFeeAmount()
-        );
+        response.setFeeAmount(student.getFeeAmount());
 
-        response.setJoiningDate(
-                student.getJoiningDate()
-        );
+        response.setJoiningDate(student.getJoiningDate());
 
-        response.setNextDueDate(
-                student.getNextDueDate()
-        );
+        response.setNextDueDate(student.getNextDueDate());
 
         response.setRoomNumber(
-                student.getRoom()
-                        .getRoomNumber()
+                student.getRoom().getRoomNumber()
         );
 
         response.setBedNumber(
-                student.getBed()
-                        .getBedNumber()
+                student.getBed().getBedNumber()
         );
 
         response.setStatus(

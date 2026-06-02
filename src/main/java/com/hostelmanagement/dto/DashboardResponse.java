@@ -10,11 +10,29 @@ public class DashboardResponse {
     private Long availableBeds;
     private Long dueTodayCount;
     private Long overdueCount;
+    private Double pendingAmount;
+    private Double collectedThisMonth;
 
     public DashboardResponse() {
     }
+    
+    public Double getPendingAmount() {
+		return pendingAmount;
+	}
 
-    public Long getTotalStudents() {
+	public void setPendingAmount(Double pendingAmount) {
+		this.pendingAmount = pendingAmount;
+	}
+
+	public Double getCollectedThisMonth() {
+		return collectedThisMonth;
+	}
+
+	public void setCollectedThisMonth(Double collectedThisMonth) {
+		this.collectedThisMonth = collectedThisMonth;
+	}
+
+	public Long getTotalStudents() {
         return totalStudents;
     }
 

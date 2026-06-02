@@ -80,7 +80,7 @@ public class FeePaymentService {
 
         LocalDate nextDueDate =
                 student.getNextDueDate()
-                        .plusDays(30);
+                            .plusMonths(1);
 
         payment.setNextDueDate(
                 nextDueDate
@@ -138,7 +138,64 @@ public class FeePaymentService {
         response.setPaymentMode(
                 payment.getPaymentMode()
         );
+        if (payment.getStudent() != null &&
+        	    payment.getStudent().getRoom() != null) {
 
+        	    response.setRoomNumber(
+        	            payment.getStudent()
+        	                    .getRoom()
+        	                    .getRoomNumber()
+        	    );
+        	}
         return response;
+    }
+    
+    public Double getCollectedThisMonth() {
+
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
+
+        LocalDate start =
+                LocalDate.now()
+                        .withDayOfMonth(1);
+
+        LocalDate end =
+                LocalDate.now();
+
+        return feePaymentRepository
+                .findByCustomerIdAndPaymentDateBetween(
+                        customerId,
+                        start,
+                        end
+                )
+                .stream()
+                .mapToDouble(
+                        FeePayment::getAmountPaid
+                )
+                .sum();
+    }
+    
+    public List<FeePaymentResponse>
+    getPaymentsThisMonth() {
+
+        Long customerId =
+                jwtUtils.getRequiredCustomerId();
+
+        LocalDate start =
+                LocalDate.now()
+                        .withDayOfMonth(1);
+
+        LocalDate end =
+                LocalDate.now();
+
+        return feePaymentRepository
+                .findByCustomerIdAndPaymentDateBetweenOrderByPaymentDateDesc(
+                        customerId,
+                        start,
+                        end
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 }

@@ -3,6 +3,7 @@ package com.hostelmanagement.repository;
 import com.hostelmanagement.entity.FeePayment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface FeePaymentRepository
@@ -14,5 +15,17 @@ public interface FeePaymentRepository
 
     List<FeePayment> findByCustomerId(
             Long customerId
+    );
+    
+    List<FeePayment> findByCustomerIdAndPaymentDateBetween(
+            Long customerId,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+    
+    List<FeePayment> findByCustomerIdAndPaymentDateBetweenOrderByPaymentDateDesc(
+            Long customerId,
+            LocalDate startDate,
+            LocalDate endDate
     );
 }

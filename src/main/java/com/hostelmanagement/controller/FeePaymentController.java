@@ -34,4 +34,12 @@ public class FeePaymentController {
         return feePaymentService
                 .getPaymentHistory(studentId);
     }
+    
+    @GetMapping("/this-month")
+    public List<FeePaymentResponse> getPaymentsThisMonth() {
+
+        return feePaymentService
+                .getPaymentsThisMonth();
+    }
+    
 }

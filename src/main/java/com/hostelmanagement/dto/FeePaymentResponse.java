@@ -15,11 +15,21 @@ public class FeePaymentResponse {
     private LocalDate nextDueDate;
 
     private String paymentMode;
+    
+    private String roomNumber;
 
     public FeePaymentResponse() {
     }
 
-    public Long getId() {
+    public String getRoomNumber() {
+		return roomNumber;
+	}
+
+	public void setRoomNumber(String roomNumber) {
+		this.roomNumber = roomNumber;
+	}
+
+	public Long getId() {
         return id;
     }
 
